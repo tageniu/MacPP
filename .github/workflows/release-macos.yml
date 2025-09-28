@@ -43,7 +43,7 @@ jobs:
             -destination 'generic/platform=macOS' \
             -archivePath "${ARCHIVE_PATH}" \
             archive \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_ALLOWED="NO"
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_ALLOWED="NO" \
             MACOSX_DEPLOYMENT_TARGET=12.0
 
       - name: Export .app from archive
@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-macOS
-          path: ${{ env.EXPORT_PATH }}/${{ env.APP_NAME }}.app
+          path: ${{ env.EXPORT_PATH }}
           if-no-files-found: error
 
       - name: Create GitHub Release
