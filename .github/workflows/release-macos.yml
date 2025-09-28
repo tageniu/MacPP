@@ -11,14 +11,12 @@ jobs:
     runs-on: macos-latest
 
     env:
-      APP_NAME: "MacPP"             # 你的 App 名称（用于 zip 命名）
-      SCHEME: "MacPP"               # 你的 Xcode Scheme 名称
-      XCODE_VERSION: "15.4"         # 可按需调整或删除本行与 setup-xcode 步骤
+      APP_NAME: "MacPP"
+      SCHEME: "MacPP"
+      XCODE_VERSION: "26.0.0"
       CONFIGURATION: "Release"
       ARCHIVE_PATH: "build/${{ github.run_id }}.xcarchive"
       EXPORT_PATH: "build/export"
-      # 注意：不要在这里用 ${{ env.APP_NAME }}，否则会触发你遇到的错误
-      # ZIP_PATH 放到后面的步骤里用 $GITHUB_ENV 计算并导出
 
     steps:
       - name: Checkout
@@ -33,10 +31,8 @@ jobs:
       - name: Compute ZIP_PATH
         run: |
           set -euo pipefail
-          # 在运行时用环境变量拼出 ZIP_PATH 并导出到后续步骤
           echo "ZIP_PATH=build/${GITHUB_RUN_ID}-${APP_NAME}-macOS.zip" >> "$GITHUB_ENV"
 
-      # 如果是 .xcworkspace，请替换 -project 为 -workspace 并加 -scheme
       - name: Build archive
         run: |
           set -euo pipefail
