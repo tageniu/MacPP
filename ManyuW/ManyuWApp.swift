@@ -11,7 +11,9 @@ import SwiftUI
 struct ManyuWApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppLauncherView()
         }
+        .windowResizability(.contentSize)
+        .windowToolbarStyle(.unified)
     }
 }
