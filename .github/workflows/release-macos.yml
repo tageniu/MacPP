@@ -11,8 +11,8 @@ jobs:
     runs-on: macos-latest
 
     env:
-      APP_NAME: "MacPP"
-      SCHEME: "MacPP"
+      APP_NAME: "ManyuW"
+      SCHEME: "ManyuW"
       XCODE_VERSION: "26.0.0"
       CONFIGURATION: "Release"
       ARCHIVE_PATH: "build/${{ github.run_id }}.xcarchive"
@@ -22,7 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 可选：固定 Xcode 版本，避免 runner 自动升级导致问题
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
