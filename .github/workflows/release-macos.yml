@@ -11,7 +11,8 @@ jobs:
     runs-on: macos-latest
 
     env:
-      APP_NAME: "ManyuW"
+      APP_NAME: "MacPP"
+      PROJECT_NAME: "ManyuW"
       SCHEME: "ManyuW"
       XCODE_VERSION: "26.0.0"
       CONFIGURATION: "Release"
@@ -36,7 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           xcodebuild \
-            -project "MacPP.xcodeproj" \
+            -project "${PROJECT_NAME}.xcodeproj" \
             -scheme "${SCHEME}" \
             -configuration "${CONFIGURATION}" \
             -destination 'generic/platform=macOS' \
