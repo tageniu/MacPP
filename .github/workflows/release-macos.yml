@@ -1,0 +1,68 @@
+name: Build and Release macOS .app
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    env:
+      APP_NAME: "MacPP"
+      SCHEME: "MacPP"
+      XCODE_VERSION: "15.4"      # Xcode Version here
+      CONFIGURATION: "Release"
+      ARCHIVE_PATH: "build/${{ github.run_id }}.xcarchive"
+      EXPORT_PATH: "build/export"
+      ZIP_PATH: "build/${{ github.run_id }}-${{ env.APP_NAME }}-macOS.zip"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 可选：固定 Xcode 版本，避免 runner 自动升级导致问题
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Build archive
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -scheme "${SCHEME}" \
+            -configuration "${CONFIGURATION}" \
+            -destination 'generic/platform=macOS' \
+            -archivePath "${ARCHIVE_PATH}" \
+            archive
+
+      - name: Export .app from archive
+        run: |
+          set -euo pipefail
+          mkdir -p "${EXPORT_PATH}"
+          APP_DIR="$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:ApplicationPath' "${ARCHIVE_PATH}/Info.plist")"
+          cp -R "${ARCHIVE_PATH}/Products/${APP_DIR}" "${EXPORT_PATH}/${APP_NAME}.app"
+
+      - name: Zip .app
+        run: |
+          set -euo pipefail
+          ditto -c -k --sequesterRsrc --keepParent "${EXPORT_PATH}/${APP_NAME}.app" "${ZIP_PATH}"
+
+      - name: Upload artifact (for debugging)
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-unsigned
+          path: ${{ env.ZIP_PATH }}
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP_PATH }}
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
